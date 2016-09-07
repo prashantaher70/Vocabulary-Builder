@@ -32,7 +32,16 @@ omni.controller('HomeController', ['$state', '$scope', '$timeout', '$mdToast',
         $scope.wordToBeAdded.synonyms.push({
             'word': '',
             'extraMeaning': '',
-            'hasExtraMeaning': false
+            'hasExtraMeaning': false,
+            'update': true
+        })
+    }
+
+    $scope.addAntonym = function() {
+        $scope.wordToBeAdded.antonyms.push({
+            'word': '',
+            'meaning': '',
+            'update': true
         })
     }
 
@@ -40,45 +49,65 @@ omni.controller('HomeController', ['$state', '$scope', '$timeout', '$mdToast',
         $scope.wordToBeAdded = {
             'word': '',
             'meaning': '',
-            'synonyms': []
+            'synonyms': [],
+            'antonyms': []
         }
     }
 
     $scope.saveWord = function() {
         synonyms = $scope.wordToBeAdded.synonyms
+        antonyms = $scope.wordToBeAdded.antonyms
         word = $scope.wordToBeAdded.word
         meaning = $scope.wordToBeAdded.meaning
         updatedWordsForMsg = ''
 
         allSynonymsStr = new Set()
+        allAntonymStr = new Set()
 
         mainWord = {
             'word': word,
-            'meaning': meaning
+            'meaning': meaning,
+            'syn': true
         }
 
         allWords = []
         allWords.push(mainWord)
         allSynonymsStr.add(angular.lowercase(mainWord.word))
+        allAntonymStr.add(angular.lowercase(mainWord.word))
 
         synonyms.forEach(function(synonym) {
-            synonymItem = {
-                'word': synonym.word
-            }
+            if(synonym.update) {
+                synonymItem = {
+                    'word': synonym.word,
+                    'syn': true
+                }
 
-            if(synonym.hasExtraMeaning) {
-                synonymItem.meaning = synonym.extraMeaning
-            } else {
-                synonymItem.meaning = meaning
-            }
+                if(synonym.hasExtraMeaning) {
+                    synonymItem.meaning = synonym.extraMeaning
+                } else {
+                    synonymItem.meaning = meaning
+                }
 
-            allWords.push(synonymItem)
-            allSynonymsStr.add(angular.lowercase(synonymItem.word))
+                allWords.push(synonymItem)
+                allSynonymsStr.add(angular.lowercase(synonymItem.word))
+            }
+        })
+
+        antonyms.forEach(function(antonym) {
+            if(antonym.update) {
+                antonymItem = {
+                    'word': antonym.word,
+                    'syn': false,
+                    'meaning': antonym.meaning
+                }
+                allWords.push(antonymItem)
+                allAntonymStr.add(angular.lowercase(antonymItem.word))
+            }
         })
 
         toStoreWords = []
 
-        //get synonyms of existing words
+        //get synonyms and antonyms of existing words
         allWords.forEach(function(item) {
 
             wordExists = false
@@ -87,7 +116,19 @@ omni.controller('HomeController', ['$state', '$scope', '$timeout', '$mdToast',
             if(existingWord != undefined) {
                 wordExists = true
                 existingWord.synonyms.forEach(function(syn) {
-                    allSynonymsStr.add(angular.lowercase(syn))
+                    if(item.syn) {
+                        allSynonymsStr.add(angular.lowercase(syn))
+                    } else {
+                        allAntonymStr.add(angular.lowercase(syn))
+                    }
+                })
+
+                existingWord.antonyms.forEach(function(ant) {
+                    if(item.syn) {
+                        allAntonymStr.add(angular.lowercase(ant))
+                    } else {
+                        allSynonymsStr.add(angular.lowercase(ant))
+                    }
                 })
             }
 
@@ -103,18 +144,69 @@ omni.controller('HomeController', ['$state', '$scope', '$timeout', '$mdToast',
             if(alreadyQueuedObjs.length == 0) {
                 otherUpdated = $scope.allWordsMap[syn]
                 if(otherUpdated != undefined) {
+                    otherUpdated.syn = true
                     console.log("Not queued for update nut needs update" + otherUpdated.word)
                     toStoreWords.push(otherUpdated)
                 }
             }
         })
 
+        allAntonymStr.forEach(function(ant) {
+            alreadyQueuedObjs = toStoreWords.filter(function(o) {
+                return angular.lowercase(o.word) == ant
+            })
+
+            if(alreadyQueuedObjs.length == 0) {
+                otherUpdated = $scope.allWordsMap[ant]
+                if(otherUpdated != undefined) {
+                    otherUpdated.syn = false
+                    console.log("Not queued for update nut needs update" + otherUpdated.word)
+                    toStoreWords.push(otherUpdated)
+                }
+            }
+        })
+
+        console.log(allSynonymsStr)
+        console.log(allAntonymStr)
         //update or store
         toStoreWords.forEach(function(item) {
-            item.synonyms = []
+            allSynonymsForThisWord = []
             allSynonymsStr.forEach(function(syn) {
-                item.synonyms.push(syn)
+                allSynonymsForThisWord.push(syn)
             })
+
+            allAntonymsForThisWord = []
+            allAntonymStr.forEach(function(ant) {
+                allAntonymsForThisWord.push(ant)
+            })
+
+            
+
+            if(item.syn) {
+                _w = angular.lowercase(item.word)
+                _windex = allSynonymsForThisWord.indexOf(_w)
+
+                if(_windex != -1) allSynonymsForThisWord.splice(_windex, 1)
+                item.synonyms = allSynonymsForThisWord
+
+                _mw = angular.lowercase(mainWord.word)
+                _mwindex = allAntonymsForThisWord.indexOf(_mw)
+
+                if(_mwindex != -1) allAntonymsForThisWord.splice(_mwindex, 1)
+                item.antonyms = allAntonymsForThisWord
+            } else {
+                _w = angular.lowercase(item.word)
+                _windex = allAntonymsForThisWord.indexOf(_w)
+                
+                _mw = angular.lowercase(mainWord.word)
+                _mwindex = allAntonymsForThisWord.indexOf(_mw)
+
+                if(_windex != -1) allAntonymsForThisWord.splice(_windex, 1)
+                if(_mwindex != -1) allAntonymsForThisWord.splice(_mwindex, 1)
+
+                item.synonyms = allAntonymsForThisWord
+                item.antonyms = allSynonymsForThisWord
+            }
 
             wordExists = false
             existingWord = $scope.allWordsMap[angular.lowercase(item.word)]
@@ -123,6 +215,8 @@ omni.controller('HomeController', ['$state', '$scope', '$timeout', '$mdToast',
                 wordExists = true
                 updatedWordsForMsg = (updatedWordsForMsg == '') ? item.word : (updatedWordsForMsg + ', ' + item.word)
             }
+
+            delete item.syn
 
             $scope.allWordsMap[angular.lowercase(item.word)] = item
             

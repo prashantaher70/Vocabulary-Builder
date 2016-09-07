@@ -68,17 +68,36 @@
 					        </md-input-container>
 					    </div>
 
+					    <div layout="column" ng-repeat="antonym in wordToBeAdded.antonyms">
+			            	<div layout="row">
+			            		<md-input-container class="md-block" flex="90">
+						            <label>Antonym</label>
+						            <input ng-model="antonym.word" required>
+						        </md-input-container>
+			            	</div>
+			            	
+					        <md-input-container class="md-block" flex-gt-xs>
+					            <label>Meaning for {{antonym.word}}</label>
+					            <input ng-model="antonym.meaning">
+					        </md-input-container>
+					    </div>
+
 				        <md-button class="md-raised md-primary" aria-label="Add synonym" ng-click="addSynonym()">
 			          		Add Synonym
+			        	</md-button>
+
+			        	<md-button class="md-raised md-primary" aria-label="Add antonym" ng-click="addAntonym()">
+			          		Add Antonym
+			        	</md-button>
+
+			        	<md-button class="md-raised md-primary" aria-label="Add synonym" ng-click="restoreAddForm()">
+			          		Reset
 			        	</md-button>
 
 			        	<md-button class="md-raised md-primary" aria-label="Add synonym" ng-click="saveWord()">
 			          		Save
 			        	</md-button>
 
-			        	<md-button class="md-raised md-primary" aria-label="Add synonym" ng-click="restoreAddForm()">
-			          		Reset
-			        	</md-button>
 			        </form>
                 </md-content>
             </md-card-content>
