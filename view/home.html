@@ -2,7 +2,7 @@
 	<md-toolbar md-scroll-shrink>
     	<div class="md-toolbar-tools">
 	      	<h3>
-	        	<span>Omni</span>
+	        	<span ng-click="goToDefaultPage()">Omni</span>
 	      	</h3>
 
 	      	<span flex></span>
@@ -104,11 +104,29 @@
         </md-card>
     </div>
 
-    <div ng-switch-when="PAGE_PLAY" layout="row" flex="100" layout-align="center">
+    <div ng-switch-when="PAGE_PLAY" layout="row" flex="100" layout-align="center start">
         <md-card flex="100">
             <md-card-content layout="column">
-                Hello {{user}}
+                
             </md-card-content>
+        </md-card>
+    </div>
+
+    <div ng-switch-when="PAGE_SEARCH" layout="row" flex="100" layout-align="center start">
+        <md-card flex="100">
+        	<md-card-title>
+	          	<md-card-title-text>
+	            	<span class="md-headline">{{autoComplete.selectedItem.word}}</span>
+	        	</md-card-title-text>
+        	</md-card-title>
+            <md-card-content layout="column">
+                <p>{{autoComplete.selectedItem.meaning}}</p>
+
+                <p><strong>Synonmys: </strong> <span ng-repeat="syn in autoComplete.selectedItem.synonyms">{{syn}}{{$last ? '' : ', '}}</span></p>
+            	<p><strong>Antonyms: </strong> <span ng-repeat="ant in autoComplete.selectedItem.antonyms">{{ant}}{{$last ? '' : ', '}}</span></p>
+            
+            </md-card-content>
+
         </md-card>
     </div>
 </div>

@@ -245,15 +245,18 @@ omni.controller('HomeController', ['$state', '$scope', '$timeout', '$mdToast',
         $scope.currentPage = page
     }
 
+    $scope.goToDefaultPage = function() {
+        $scope.currentPage = 'DEFAULT_PAGE'
+    }
 
     $scope.autoComplete = {
         'selectedItem': null,
         'searchText': '',
         'searchTextChange': function(text) {
-
+            if(text == '' || text == undefined || text == null) $scope.goToDefaultPage()
         },
         'selectedItemChange': function(item) {
-
+            $scope.currentPage = 'PAGE_SEARCH'
         },
         'querySearch': function(query) {
             function filter(words, query) {
@@ -269,6 +272,7 @@ omni.controller('HomeController', ['$state', '$scope', '$timeout', '$mdToast',
                 return words.filter( createFilterFor(query) )
             }
             var results = query ? filter($scope.allWords, query) : []
+            if(results.length == 0) $scope.goToDefaultPage()
             return results;
         }
     }
