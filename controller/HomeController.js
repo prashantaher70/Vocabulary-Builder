@@ -11,6 +11,11 @@ omni.controller('HomeController', ['$state', '$scope', '$timeout', '$mdToast',
         chrome.storage.sync.get("all-words", function (data) {
             $scope.allWordsMap = data["all-words"]
 
+            if($scope.allWordsMap == undefined) {
+                $scope.allWordsMap = {}
+                $scope.allWords = []
+            }
+
             for (var word in $scope.allWordsMap) {
                 if ($scope.allWordsMap.hasOwnProperty(word)) {
                     $scope.allWords.push($scope.allWordsMap[word]);
@@ -18,6 +23,7 @@ omni.controller('HomeController', ['$state', '$scope', '$timeout', '$mdToast',
             }
         })
     }
+    
     $scope.loadWordsFromStorage()
 
     $scope.addSynonym = function() {
@@ -69,14 +75,14 @@ omni.controller('HomeController', ['$state', '$scope', '$timeout', '$mdToast',
             wordToStore = item
             
             wordExists = false
-            existingWord = $scope.allWordsMap[wordToStore.word]
+            existingWord = $scope.allWordsMap[angular.lowercase(wordToStore.word)]
 
             if(existingWord != undefined) {
                 wordExists = true
                 updatedWordsForMsg = (updatedWordsForMsg == '') ? wordToStore.word : (updatedWordsForMsg + ', ' + wordToStore.word)
             }
 
-            $scope.allWordsMap[item.word] = wordToStore
+            $scope.allWordsMap[angular.lowercase(item.word)] = wordToStore
             
             if(!existingWord) {
                 $scope.allWords.push(wordToStore)
@@ -114,10 +120,12 @@ omni.controller('HomeController', ['$state', '$scope', '$timeout', '$mdToast',
 
         },
         'querySearch': function(query) {
-
+            query = angular.lowercase(query)
             function createFilterFor(query) {
                 return function filterFn(item) {
-                    return (item.word.indexOf(query) === 0);
+                    return (
+                        angular.lowercase(item.word).indexOf(query) === 0
+                    );
                 };
             }
 
