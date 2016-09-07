@@ -1,0 +1,95 @@
+<div layout="column" layout-fill="" ng-switch="currentPage">
+	<md-toolbar md-scroll-shrink>
+    	<div class="md-toolbar-tools">
+	      	<h3>
+	        	<span>Omni</span>
+	      	</h3>
+
+	      	<span flex></span>
+	        <md-autocomplete flex="70"
+	        	md-autofocus="false"
+		    	md-selected-item="autoComplete.selectedItem"
+		        md-search-text-change="autoComplete.searchTextChange(autoComplete.searchText)"
+		        md-search-text="autoComplete.searchText"
+		        md-selected-item-change="autoComplete.selectedItemChange(item)"
+		        md-items="item in autoComplete.querySearch(autoComplete.searchText)"
+		        md-item-text="item.word"
+		        md-min-length="1"
+		        placeholder="Search word">
+		        <md-item-template>
+          				<span md-highlight-text="autoComplete.searchText" md-highlight-flags="^i">{{item.word}}</span>
+        		</md-item-template>
+        		<md-not-found>
+          			No word matching "{{autoComplete.searchText}}" was found.
+        		</md-not-found>
+	        </md-autocomplete>
+		    
+        	<md-button class="md-icon-button" aria-label="Play" ng-click="goToPage('PAGE_PLAY')">
+          		<md-icon md-svg-icon="images/ic_play_arrow_black_24px.svg"></md-icon>
+        	</md-button>
+    	</div>
+  	</md-toolbar>
+
+	<div ng-switch-default layout="row" flex="100" layout-align="center start">
+        <md-card flex="100">
+        	<md-card-title>
+	          	<md-card-title-text>
+	            	<span class="md-headline">Add new word</span>
+	        	</md-card-title-text>
+        	</md-card-title>
+            <md-card-content layout="column">
+                <md-content>
+	            	
+	            	<form>
+		            	<md-input-container class="md-block" flex-gt-xs>
+				            <label>Word</label>
+				            <input ng-model="wordToBeAdded.word" required>
+				        </md-input-container>
+
+				        <md-input-container class="md-block" flex-gt-xs>
+				            <label>Meaning</label>
+				            <input ng-model="wordToBeAdded.meaning" required>
+				        </md-input-container>
+
+				        <div layout="column" ng-repeat="synonym in wordToBeAdded.synonyms">
+			            	<div layout="row">
+			            		<md-input-container class="md-block" flex="90">
+						            <label>Synonym</label>
+						            <input ng-model="synonym.word" required>
+						        </md-input-container>
+						        <md-button class="md-icon-button" aria-label="Add meaning for synonym" ng-click="synonym.hasExtraMeaning = true">
+					          		<md-icon md-svg-icon="images/ic_add_black_24px.svg"></md-icon>
+					        	</md-button>
+			            	</div>
+			            	
+					        <md-input-container ng-if="synonym.hasExtraMeaning" class="md-block" flex-gt-xs>
+					            <label>Meaning for {{synonym.word}}</label>
+					            <input ng-model="synonym.extraMeaning">
+					        </md-input-container>
+					    </div>
+
+				        <md-button class="md-raised md-primary" aria-label="Add synonym" ng-click="addSynonym()">
+			          		Add Synonym
+			        	</md-button>
+
+			        	<md-button class="md-raised md-primary" aria-label="Add synonym" ng-click="saveWord()">
+			          		Save
+			        	</md-button>
+
+			        	<md-button class="md-raised md-primary" aria-label="Add synonym" ng-click="restoreAddForm()">
+			          		Reset
+			        	</md-button>
+			        </form>
+                </md-content>
+            </md-card-content>
+        </md-card>
+    </div>
+
+    <div ng-switch-when="PAGE_PLAY" layout="row" flex="100" layout-align="center">
+        <md-card flex="100">
+            <md-card-content layout="column">
+                Hello {{user}}
+            </md-card-content>
+        </md-card>
+    </div>
+</div>
