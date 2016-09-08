@@ -1,5 +1,4 @@
-<md-content layout-fill="" ng-switch="currentPage">
-
+<md-content layout-fill="">
 	<md-toolbar>
 		<div class="md-toolbar-tools">
 	      	<h3>
@@ -31,15 +30,15 @@
 		</div>
 	</md-toolbar>
 
-	<div ng-switch-when="PAGE_ADD_WORD" layout="row" flex>
-        <md-card flex="100">
-        	<md-card-title>
+	<div layout="row" ng-switch="currentPage">
+	    <md-card ng-switch-when="PAGE_ADD_WORD">
+	    	<md-card-title>
 	          	<md-card-title-text>
 	            	<span class="md-headline">Add new word</span>
 	        	</md-card-title-text>
-        	</md-card-title>
-            <md-card-content layout="row">
-            	<form>
+	    	</md-card-title>
+	        <md-card-content layout="row">
+	        	<form>
 	            	<md-input-container class="md-block" flex-gt-xs>
 			            <label>Word</label>
 			            <input ng-model="wordToBeAdded.word" required>
@@ -99,64 +98,64 @@
 
 		        	<p><code>If word exists in inventory, it's meaning is not updated unless it is a main word</code></p>
 		        </form>
-            </md-card-content>
-        </md-card>
-    </div>
+	        </md-card-content>
+	    </md-card>
 
-    <div ng-switch-when="PAGE_PLAY" layout="column">
-    	<div layout="row" ng-if="playData.playSet">
-	    	<md-card flex="100">
-	            <md-card-content layout="column" layout-align="start center">
-	            	<h2>{{playData.currentWord.word}}</h2>
+	    <div ng-switch-when="PAGE_PLAY" layout="column" flex="100">
+	    	<div layout="row" ng-if="playData.playSet">
+		    	<md-card flex="100">
+		            <md-card-content layout="column" layout-align="start center">
+		            	<h2>{{playData.currentWord.word}}</h2>
 
-	            	<p ng-if="playData.showMeaning">
-	            		{{playData.currentWord.meaning}}
-	            	</p>
+		            	<p ng-if="playData.showMeaning">
+		            		{{playData.currentWord.meaning}}
+		            	</p>
 
-	            	<md-button ng-hide="playData.showMeaning" class="md-raised md-primary" ng-click="playData.showMeaning = true">Show meaning</md-button>
+		            	<md-button ng-hide="playData.showMeaning" class="md-raised md-primary" ng-click="playData.showMeaning = true">Show meaning</md-button>
 
-	            </md-card-content>
-	            <md-card-actions layout="row" layout-align="end center">
-		        	<md-button ng-click="playShowNext()">Next</md-button>
-		        </md-card-actions>
-	        </md-card>
+		            </md-card-content>
+		            <md-card-actions layout="row" layout-align="end center">
+			        	<md-button ng-click="playShowNext()">Next</md-button>
+			        </md-card-actions>
+		        </md-card>
+		    </div>
+
+		    <div layout="row">
+		        <md-card flex="100">
+		            <md-card-content layout="row" class="md-inline-form">
+		           		<md-datepicker ng-model="playData.startDate" md-placeholder="Start Date"></md-datepicker>
+			            
+			            <md-datepicker ng-model="playData.endDate" md-placeholder="End Date"></md-datepicker>
+				        
+				        &nbsp;&nbsp;
+				        <md-checkbox ng-model="playData.random" aria-label="Random check">
+	            			Random
+	          			</md-checkbox>
+		            </md-card-content>
+
+		            <md-button class="md-raised md-primary" aria-label="Add synonym" ng-click="startPlay()">
+		          		Play
+		        	</md-button>
+		        </md-card>
+		    </div>
 	    </div>
 
-	    <div layout="row">
+	    <div ng-switch-when="PAGE_SEARCH" layout="row" flex="100">
 	        <md-card flex="100">
-	            <md-card-content layout="row" class="md-inline-form">
-	           		<md-datepicker ng-model="playData.startDate" md-placeholder="Start Date"></md-datepicker>
-		            
-		            <md-datepicker ng-model="playData.endDate" md-placeholder="End Date"></md-datepicker>
-			        
-			        &nbsp;&nbsp;
-			        <md-checkbox ng-model="playData.random" aria-label="Random check">
-            			Random
-          			</md-checkbox>
+	        	<md-card-title>
+		          	<md-card-title-text>
+		            	<span class="md-headline">{{autoComplete.selectedItem.word}}</span>
+		        	</md-card-title-text>
+	        	</md-card-title>
+	            <md-card-content layout="column">
+	                <p>{{autoComplete.selectedItem.meaning}}</p>
+
+	                <p><strong>Synonmys: </strong> <span ng-repeat="syn in autoComplete.selectedItem.synonyms">{{syn}}{{$last ? '' : ', '}}</span></p>
+	            	<p><strong>Antonyms: </strong> <span ng-repeat="ant in autoComplete.selectedItem.antonyms">{{ant}}{{$last ? '' : ', '}}</span></p>
+	            
 	            </md-card-content>
 
-	            <md-button class="md-raised md-primary" aria-label="Add synonym" ng-click="startPlay()">
-	          		Play
-	        	</md-button>
 	        </md-card>
 	    </div>
-    </div>
-
-    <div ng-switch-when="PAGE_SEARCH" layout="row">
-        <md-card flex="100">
-        	<md-card-title>
-	          	<md-card-title-text>
-	            	<span class="md-headline">{{autoComplete.selectedItem.word}}</span>
-	        	</md-card-title-text>
-        	</md-card-title>
-            <md-card-content layout="column">
-                <p>{{autoComplete.selectedItem.meaning}}</p>
-
-                <p><strong>Synonmys: </strong> <span ng-repeat="syn in autoComplete.selectedItem.synonyms">{{syn}}{{$last ? '' : ', '}}</span></p>
-            	<p><strong>Antonyms: </strong> <span ng-repeat="ant in autoComplete.selectedItem.antonyms">{{ant}}{{$last ? '' : ', '}}</span></p>
-            
-            </md-card-content>
-
-        </md-card>
-    </div>
+	</div>
 </md-content>
