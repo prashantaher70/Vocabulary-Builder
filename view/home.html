@@ -105,7 +105,14 @@
     	<div layout="row" ng-if="playData.playSet">
 	    	<md-card flex="100">
 	            <md-card-content layout="column" layout-align="start center">
-	            	<h4>{{playData.currentWord.word}}</h4>
+	            	<h2>{{playData.currentWord.word}}</h2>
+
+	            	<p ng-if="playData.showMeaning">
+	            		{{playData.currentWord.meaning}}
+	            	</p>
+
+	            	<md-button ng-hide="playData.showMeaning" class="md-raised md-primary" ng-click="playData.showMeaning = true">Show meaning</md-button>
+
 	            </md-card-content>
 	            <md-card-actions layout="row" layout-align="end center">
 		        	<md-button ng-click="playShowNext()">Next</md-button>
@@ -121,7 +128,7 @@
 		            <md-datepicker ng-model="playData.endDate" md-placeholder="End Date"></md-datepicker>
 			        
 			        &nbsp;&nbsp;
-			        <md-checkbox ng-model="playData.random" aria-label="Random check" ng-change="$scope.setupPlay();$scope.startPlay()">
+			        <md-checkbox ng-model="playData.random" aria-label="Random check">
             			Random
           			</md-checkbox>
 	            </md-card-content>

@@ -264,6 +264,7 @@ omni.controller('HomeController', ['$state', '$scope', '$timeout', '$mdToast',
             'startDate': null,
             'endDate': null,
             'random': false,
+            'randomCopy': false,
             'currentSliceStart': -1,
             'currentSliceEnd': -1,
             'playSet': false,
@@ -285,7 +286,12 @@ omni.controller('HomeController', ['$state', '$scope', '$timeout', '$mdToast',
     $scope.startPlay = function() {
         $scope.playData.currentSliceStart = -1
         $scope.playData.currentSliceEnd = -1
-
+        $scope.playData.currentIndex = -1
+        $scope.playData.currentWord = {}
+        $scope.playData.playSet = false
+        
+        $scope.playData.randomCopy = $scope.playData.random
+        
         _start = $scope.playData.startDate.getTime()
         _end = $scope.playData.endDate.getTime()
         
@@ -318,7 +324,8 @@ omni.controller('HomeController', ['$state', '$scope', '$timeout', '$mdToast',
     }
 
     $scope.playShowNext = function() {
-        if($scope.playData.random) {
+        $scope.playData.showMeaning = false
+        if($scope.playData.randomCopy) {
             $scope.playData.currentIndex = getRandomInt($scope.playData.currentSliceStart, $scope.playData.currentSliceEnd)
         } else {
             if($scope.playData.currentIndex == -1) {
