@@ -86,12 +86,20 @@ omni.controller('HomeController', ['$state', '$scope', '$timeout', '$mdToast',
                     'syn': true
                 }
 
-                if(synonym.hasExtraMeaning) {
-                    synonymItem.meaning = synonym.extraMeaning
-                } else {
-                    synonymItem.meaning = meaning
-                }
+                _existingWord = $scope.allWordsMap[angular.lowercase(synonym.word)]
 
+                if(_existingWord != undefined) {
+                    //not updating meaning
+                    console.log('Not updating meaning for ' + synonym.word)
+                    synonymItem.meaning = _existingWord.meaning
+
+                } else {
+                    if(synonym.hasExtraMeaning) {
+                        synonymItem.meaning = synonym.extraMeaning
+                    } else {
+                        synonymItem.meaning = meaning
+                    }
+                }
                 allWords.push(synonymItem)
                 allSynonymsStr.add(angular.lowercase(synonymItem.word))
             }
@@ -101,9 +109,20 @@ omni.controller('HomeController', ['$state', '$scope', '$timeout', '$mdToast',
             if(antonym.update) {
                 antonymItem = {
                     'word': antonym.word,
-                    'syn': false,
-                    'meaning': antonym.meaning
+                    'syn': false
                 }
+                
+                _existingWord = $scope.allWordsMap[angular.lowercase(antonym.word)]
+
+                if(_existingWord != undefined) {
+                    //not updating meaning
+                    console.log('Not updating meaning for ' + antonym.word)
+                    antonymItem.meaning = _existingWord.meaning
+                    
+                } else {
+                    antonymItem.meaning = antonym.meaning
+                }
+
                 allWords.push(antonymItem)
                 allAntonymStr.add(angular.lowercase(antonymItem.word))
             }
@@ -291,7 +310,7 @@ omni.controller('HomeController', ['$state', '$scope', '$timeout', '$mdToast',
         $scope.playData.playSet = false
         
         $scope.playData.randomCopy = $scope.playData.random
-        
+
         _start = $scope.playData.startDate.getTime()
         _end = $scope.playData.endDate.getTime()
         
