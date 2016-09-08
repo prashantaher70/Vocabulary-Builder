@@ -1,5 +1,6 @@
 <md-content layout-fill="" ng-switch="currentPage">
-	<md-toolbar md-scroll-shrink>
+
+	<md-toolbar>
 		<div class="md-toolbar-tools">
 	      	<h3>
 	        	<span ng-click="goToDefaultPage()">Omni</span>
@@ -24,13 +25,13 @@
 	    		</md-not-found>
 	        </md-autocomplete>
 		    
-	    	<md-button class="md-icon-button" aria-label="Play" ng-click="goToPage('PAGE_PLAY')">
-	      		<md-icon md-svg-icon="images/ic_play_arrow_black_24px.svg"></md-icon>
+	    	<md-button class="md-icon-button" aria-label="Add word" ng-click="goToPage('PAGE_ADD_WORD')">
+	      		<md-icon md-svg-icon="images/ic_add_black_24px.svg"></md-icon>
 	    	</md-button>
 		</div>
 	</md-toolbar>
 
-	<div ng-switch-default layout="row">
+	<div ng-switch-when="PAGE_ADD_WORD" layout="row" flex>
         <md-card flex="100">
         	<md-card-title>
 	          	<md-card-title-text>

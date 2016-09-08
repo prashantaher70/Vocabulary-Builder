@@ -6,6 +6,11 @@ omni.controller('HomeController', ['$state', '$scope', '$timeout', '$mdToast',
     $scope.allWords = []
     $scope.allWordsMap = {}
     $scope.wordToBeAdded = {}
+    $scope.goToDefaultPage = function() {
+        $scope.currentPage = 'PAGE_PLAY'
+    }
+
+    $scope.goToDefaultPage()
 
     $scope.loadWordsFromStorage = function() {
         chrome.storage.local.get("all-words", function (data) {
@@ -362,10 +367,6 @@ omni.controller('HomeController', ['$state', '$scope', '$timeout', '$mdToast',
             }
         }
         $scope.playData.currentWord = $scope.allWords[$scope.playData.currentIndex]
-    }
-
-    $scope.goToDefaultPage = function() {
-        $scope.currentPage = 'DEFAULT_PAGE'
     }
 
     $scope.autoComplete = {
