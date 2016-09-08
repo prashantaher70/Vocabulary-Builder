@@ -3,9 +3,7 @@ omni = angular.module("OmniVocab")
 omni.controller('HomeController', ['$state', '$scope', '$timeout', '$mdToast',
     function($state, $scope, $timeout, $mdToast){
 
-    //this might not be always correct, like synonyms, antonyms
     $scope.allWords = []
-    //always correct
     $scope.allWordsMap = {}
     $scope.wordToBeAdded = {}
 
@@ -52,6 +50,12 @@ omni.controller('HomeController', ['$state', '$scope', '$timeout', '$mdToast',
             'synonyms': [],
             'antonyms': []
         }
+    }
+    function arrayObjectIndexOf(myArray, searchTerm, property) {
+        for(var i = 0, len = myArray.length; i < len; i++) {
+            if (myArray[i][property] === searchTerm) return i;
+        }
+        return -1;
     }
 
     $scope.saveWord = function() {
@@ -166,8 +170,7 @@ omni.controller('HomeController', ['$state', '$scope', '$timeout', '$mdToast',
             }
         })
 
-        console.log(allSynonymsStr)
-        console.log(allAntonymStr)
+        modifyTime =  new Date().getTime()
         //update or store
         toStoreWords.forEach(function(item) {
             allSynonymsForThisWord = []
@@ -208,6 +211,7 @@ omni.controller('HomeController', ['$state', '$scope', '$timeout', '$mdToast',
                 item.antonyms = allSynonymsForThisWord
             }
 
+            item.modifiedDate = modifyTime
             wordExists = false
             existingWord = $scope.allWordsMap[angular.lowercase(item.word)]
 
@@ -220,9 +224,14 @@ omni.controller('HomeController', ['$state', '$scope', '$timeout', '$mdToast',
 
             $scope.allWordsMap[angular.lowercase(item.word)] = item
             
-            if(!wordExists) {
-                $scope.allWords.push(item)
+            if(wordExists) {
+                _existingWordIndex = arrayObjectIndexOf($scope.allWords, existingWord.word, 'word')
+                if(_existingWordIndex != -1) {
+                    $scope.allWords.splice(_existingWordIndex, 1)
+                    console.log('Updating word in array :' + existingWord.word)
+                }
             }
+            $scope.allWords.push(item)
         })
 
         chrome.storage.local.set({"all-words": $scope.allWordsMap}, function() {
@@ -243,6 +252,27 @@ omni.controller('HomeController', ['$state', '$scope', '$timeout', '$mdToast',
 
     $scope.goToPage = function(page) {
         $scope.currentPage = page
+
+        if(page == 'PAGE_PLAY') {
+            $scope.setupPlay()
+        }
+    }
+
+    $scope.playData = {}
+    $scope.setupPlay = function() {
+        $scope.playData = {
+            'startDate': null
+        }
+
+        //sort array
+        function compare(a,b) {
+            if (a.modifiedDate < b.modifiedDate)
+                return -1;
+            if (a.modifiedDate > b.modifiedDate)
+                return 1;
+            return 0;
+        }
+        $scope.allWords.sort(compare)
     }
 
     $scope.goToDefaultPage = function() {
