@@ -122,15 +122,31 @@
 
 		    <div layout="row">
 		        <md-card flex="100">
-		            <md-card-content layout="row" class="md-inline-form">
-		           		<md-datepicker ng-model="playData.startDate" md-placeholder="Start Date"></md-datepicker>
-			            
-			            <md-datepicker ng-model="playData.endDate" md-placeholder="End Date"></md-datepicker>
-				        
-				        &nbsp;&nbsp;
+		            <md-card-content layout="column" class="md-inline-form">
+
+		            	<md-input-container class="md-block" ng-if="!playData.advanced">
+				            <label>Range</label>
+				            <md-select ng-model="playData.range">
+				            	<md-option ng-repeat="range in playData.ranges" value="{{range}}">
+				                	{{range}}
+				              	</md-option>
+				            </md-select>
+				        </md-input-container>
+
 				        <md-checkbox ng-model="playData.random" aria-label="Random check">
 	            			Random
 	          			</md-checkbox>
+				        
+				        <md-checkbox ng-model="playData.advanced" aria-label="Advance check">
+	            			Advanced
+	          			</md-checkbox>
+
+	          			<md-datepicker ng-if="playData.advanced"
+		           			ng-model="playData.startDate" md-placeholder="Start Date"></md-datepicker>
+			            
+			            <md-datepicker ng-if="playData.advanced"
+			            	ng-model="playData.endDate" md-placeholder="End Date"></md-datepicker>
+			            	
 		            </md-card-content>
 
 		            <md-button class="md-raised md-primary" aria-label="Add synonym" ng-click="startPlay()">

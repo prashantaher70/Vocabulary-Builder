@@ -6,8 +6,38 @@ omni.controller('HomeController', ['$state', '$scope', '$timeout', '$mdToast',
     $scope.allWords = []
     $scope.allWordsMap = {}
     $scope.wordToBeAdded = {}
+
+    $scope.playData = {}
+    $scope.setupPlay = function() {
+        $scope.playData = {
+            'startDate': null,
+            'endDate': null,
+            'random': false,
+            'randomCopy': false,
+            'currentSliceStart': -1,
+            'currentSliceEnd': -1,
+            'playSet': false,
+            'currentWord': {},
+            'currentIndex': -1,
+            'range': 'Yesterday',
+            'advanced': false,
+            'ranges': ['Yesterday', 'Last 2 days', 'Last 3 days', 'Last week', 'Last 2 weeks', 'Last month', 'Last quarter', 'Last year']
+        }
+
+        //sort array
+        function compare(a,b) {
+            if (a.modifiedDate < b.modifiedDate)
+                return -1;
+            if (a.modifiedDate > b.modifiedDate)
+                return 1;
+            return 0;
+        }
+        $scope.allWords.sort(compare)
+    }
+
     $scope.goToDefaultPage = function() {
         $scope.currentPage = 'PAGE_PLAY'
+        $scope.setupPlay()
     }
 
     $scope.goToDefaultPage()
@@ -282,32 +312,45 @@ omni.controller('HomeController', ['$state', '$scope', '$timeout', '$mdToast',
         }
     }
 
-    $scope.playData = {}
-    $scope.setupPlay = function() {
-        $scope.playData = {
-            'startDate': null,
-            'endDate': null,
-            'random': false,
-            'randomCopy': false,
-            'currentSliceStart': -1,
-            'currentSliceEnd': -1,
-            'playSet': false,
-            'currentWord': {},
-            'currentIndex': -1
+    function figureOutDates() {
+        _end = new Date().getTime()
+        $scope.playData.endDate = new Date(_end)
+        _diff = 30 * 24 * 60 * 60 * 1000
+        switch($scope.playData.range) {
+            case 'Yesterday':
+                _diff = 24 * 60 * 60 * 1000
+                break
+            case 'Last 2 days':
+                _diff = 2 * 24 * 60 * 60 * 1000
+                break
+            case 'Last 3 days':
+                _diff = 3 * 24 * 60 * 60 * 1000
+                break
+            case 'Last week':
+                _diff = 7 * 24 * 60 * 60 * 1000
+                break
+            case 'Last 2 weeks':
+                _diff = 15 * 24 * 60 * 60 * 1000
+                break
+            case 'Last year':
+                _diff = 365 * 24 * 60 * 60 * 1000
+                break
+            case 'Last quarter':
+                _diff = 183 * 24 * 60 * 60 * 1000
+                break
+            default:
+                //month
+                break
         }
-
-        //sort array
-        function compare(a,b) {
-            if (a.modifiedDate < b.modifiedDate)
-                return -1;
-            if (a.modifiedDate > b.modifiedDate)
-                return 1;
-            return 0;
-        }
-        $scope.allWords.sort(compare)
+        _start = _end - _diff
+        $scope.playData.startDate = new Date(_start)
     }
 
     $scope.startPlay = function() {
+        if(!$scope.playData.advanced) {
+            figureOutDates()
+        }
+
         $scope.playData.currentSliceStart = -1
         $scope.playData.currentSliceEnd = -1
         $scope.playData.currentIndex = -1
