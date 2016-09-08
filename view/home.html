@@ -1,35 +1,35 @@
-<md-toolbar md-scroll-shrink>
-	<div class="md-toolbar-tools">
-      	<h3>
-        	<span ng-click="goToDefaultPage()">Omni</span>
-      	</h3>
-
-      	<span flex></span>
-        <md-autocomplete flex="70"
-        	md-autofocus="false"
-	    	md-selected-item="autoComplete.selectedItem"
-	        md-search-text-change="autoComplete.searchTextChange(autoComplete.searchText)"
-	        md-search-text="autoComplete.searchText"
-	        md-selected-item-change="autoComplete.selectedItemChange(item)"
-	        md-items="item in autoComplete.querySearch(autoComplete.searchText)"
-	        md-item-text="item.word"
-	        md-min-length="1"
-	        placeholder="Search word">
-	        <md-item-template>
-      				<span md-highlight-text="autoComplete.searchText" md-highlight-flags="^i">{{item.word}}</span>
-    		</md-item-template>
-    		<md-not-found>
-      			No word matching "{{autoComplete.searchText}}" was found.
-    		</md-not-found>
-        </md-autocomplete>
-	    
-    	<md-button class="md-icon-button" aria-label="Play" ng-click="goToPage('PAGE_PLAY')">
-      		<md-icon md-svg-icon="images/ic_play_arrow_black_24px.svg"></md-icon>
-    	</md-button>
-	</div>
-</md-toolbar>
-
 <md-content layout-fill="" ng-switch="currentPage">
+	<md-toolbar md-scroll-shrink>
+		<div class="md-toolbar-tools">
+	      	<h3>
+	        	<span ng-click="goToDefaultPage()">Omni</span>
+	      	</h3>
+
+	      	<span flex></span>
+	        <md-autocomplete flex="70"
+	        	md-autofocus="false"
+		    	md-selected-item="autoComplete.selectedItem"
+		        md-search-text-change="autoComplete.searchTextChange(autoComplete.searchText)"
+		        md-search-text="autoComplete.searchText"
+		        md-selected-item-change="autoComplete.selectedItemChange(item)"
+		        md-items="item in autoComplete.querySearch(autoComplete.searchText)"
+		        md-item-text="item.word"
+		        md-min-length="1"
+		        placeholder="Search word">
+		        <md-item-template>
+	      				<span md-highlight-text="autoComplete.searchText" md-highlight-flags="^i">{{item.word}}</span>
+	    		</md-item-template>
+	    		<md-not-found>
+	      			No word matching "{{autoComplete.searchText}}" was found.
+	    		</md-not-found>
+	        </md-autocomplete>
+		    
+	    	<md-button class="md-icon-button" aria-label="Play" ng-click="goToPage('PAGE_PLAY')">
+	      		<md-icon md-svg-icon="images/ic_play_arrow_black_24px.svg"></md-icon>
+	    	</md-button>
+		</div>
+	</md-toolbar>
+
 	<div ng-switch-default layout="row">
         <md-card flex="100">
         	<md-card-title>
@@ -102,36 +102,33 @@
     </div>
 
     <div ng-switch-when="PAGE_PLAY" layout="column">
-    	<div layout="row">
+    	<div layout="row" ng-if="playData.playSet">
 	    	<md-card flex="100">
-	            <md-card-content layout="column">
+	            <md-card-content layout="column" layout-align="start center">
+	            	<h4>{{playData.currentWord.word}}</h4>
 	            </md-card-content>
+	            <md-card-actions layout="row" layout-align="end center">
+		        	<md-button ng-click="playShowNext()">Next</md-button>
+		        </md-card-actions>
 	        </md-card>
 	    </div>
 
 	    <div layout="row">
 	        <md-card flex="100">
-	            <md-card-content layout="column">
-	            	<div layout="row">
-	            		<md-input-container>
-					        	<label>Start date</label>
-					            <input type="date" ng-model="playData.startDate"/>
-					        </md-input-container>
-			            </md-card-content>
-
-			            <md-input-container>
-					        	<label>End date</label>
-					            <input type="date" ng-model="playData.endDate"/>
-					        </md-input-container>
-			            </md-card-content>
-			            &nbsp;&nbsp;
-			            <md-input-container>
-				            <md-checkbox ng-model="playData.random" aria-label="Random check">
-		            			Random
-		          			</md-checkbox>
-		          		</md-input-container>
-	            	</div>
+	            <md-card-content layout="row" class="md-inline-form">
+	           		<md-datepicker ng-model="playData.startDate" md-placeholder="Start Date"></md-datepicker>
+		            
+		            <md-datepicker ng-model="playData.endDate" md-placeholder="End Date"></md-datepicker>
+			        
+			        &nbsp;&nbsp;
+			        <md-checkbox ng-model="playData.random" aria-label="Random check" ng-change="$scope.setupPlay();$scope.startPlay()">
+            			Random
+          			</md-checkbox>
 	            </md-card-content>
+
+	            <md-button class="md-raised md-primary" aria-label="Add synonym" ng-click="startPlay()">
+	          		Play
+	        	</md-button>
 	        </md-card>
 	    </div>
     </div>

@@ -261,7 +261,14 @@ omni.controller('HomeController', ['$state', '$scope', '$timeout', '$mdToast',
     $scope.playData = {}
     $scope.setupPlay = function() {
         $scope.playData = {
-            'startDate': null
+            'startDate': null,
+            'endDate': null,
+            'random': false,
+            'currentSliceStart': -1,
+            'currentSliceEnd': -1,
+            'playSet': false,
+            'currentWord': {},
+            'currentIndex': -1
         }
 
         //sort array
@@ -273,6 +280,62 @@ omni.controller('HomeController', ['$state', '$scope', '$timeout', '$mdToast',
             return 0;
         }
         $scope.allWords.sort(compare)
+    }
+
+    $scope.startPlay = function() {
+        $scope.playData.currentSliceStart = -1
+        $scope.playData.currentSliceEnd = -1
+
+        _start = $scope.playData.startDate.getTime()
+        _end = $scope.playData.endDate.getTime()
+        
+        if(_end < _start) return
+
+        var i = 0;
+        for(i=0; i < $scope.allWords.length; i++) {
+            _w = $scope.allWords[i]
+            if($scope.playData.currentSliceStart == -1 && _w.modifiedDate >= _start) {
+                $scope.playData.currentSliceStart = i
+            }
+            if(_w.modifiedDate >= _end) {
+                $scope.playData.currentSliceEnd = i - 1
+                break;
+            }
+        }
+        if($scope.playData.currentSliceEnd == -1) {
+            $scope.playData.currentSliceEnd = $scope.allWords.length
+        }
+
+        if( $scope.playData.currentSliceStart != -1 &&
+             $scope.playData.currentSliceEnd != -1) {
+            $scope.playData.playSet = true
+            $scope.playShowNext()
+        }
+    }
+    
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    $scope.playShowNext = function() {
+        if($scope.playData.random) {
+            $scope.playData.currentIndex = getRandomInt($scope.playData.currentSliceStart, $scope.playData.currentSliceEnd)
+        } else {
+            if($scope.playData.currentIndex == -1) {
+                $scope.playData.currentIndex = $scope.playData.currentSliceStart 
+            } else {
+                if($scope.playData.currentIndex + 1 == $scope.playData.currentSliceEnd) {
+                    $mdToast.show(
+                        $mdToast.simple()
+                        .textContent('End reached')
+                        .hideDelay(3000)
+                    )
+                    return
+                }
+                $scope.playData.currentIndex = $scope.playData.currentIndex + 1
+            }
+        }
+        $scope.playData.currentWord = $scope.allWords[$scope.playData.currentIndex]
     }
 
     $scope.goToDefaultPage = function() {
